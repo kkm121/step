@@ -1,11 +1,7 @@
 public class TestAccount {
 
     private static void printAccount(Account acc) {
-        System.out.println("Account #" + acc.getAccountNumber() + " | " 
-                + acc.getName() + " (" + acc.getAge() + " yRs ) | " 
-                + acc.getAccountType() + " | Rs " 
-                + acc.getBalance() + " | " 
-                + acc.getStatus());
+        System.out.println("Account #" + acc.getAccountNumber() + " | " + acc.getName() + " (" + acc.getAge() + " years ) | " + acc.getAccountType() + " | Rs " + acc.getBalance() + " | " + acc.getStatus());
     }
 
     public static void main(String[] args) {
