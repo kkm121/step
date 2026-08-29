@@ -37,7 +37,6 @@ public class TestAccountEnhanced {
         System.out.print("Initial: ");
         displayAccountLine(acc5);
         System.out.println();
-
         boolean withdrawSuccess = acc5.withdraw(200.0);
         System.out.println("Withdrawing Rs 200.0: " + (withdrawSuccess ? "SUCCESS" : "FAILED"));
         if (withdrawSuccess) {
