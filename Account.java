@@ -9,7 +9,7 @@ public class Account {
     private int accountNumber;
     private String name;
     private int age;
-    private double balance;
+    protected double balance;
     private String accountType;
     private String status;
     private Integer pin;
@@ -34,15 +34,19 @@ public class Account {
         }
     }
     private String accType(String accountType) {
+        if ("Savings".equalsIgnoreCase(accountType)) {
+            return "SAVINGS";
+        }
         if ("Current".equalsIgnoreCase(accountType)) {
-            return "Current";
+            return "CURRENT";
         }
-        else if ("Savings".equalsIgnoreCase(accountType)){
-            return "Savings";
+        if ("FixedDeposit".equalsIgnoreCase(accountType) || "Fixed_Deposit".equalsIgnoreCase(accountType)) {
+            return "FIXED_DEPOSIT";
         }
-        else{
-            throw new IllegalArgumentException("Account type must be 'Savings' or 'Current'. Provided: " + accountType);
+        if ("Salary".equalsIgnoreCase(accountType)) {
+            return "SALARY";
         }
+        throw new IllegalArgumentException("Account type must be 'Savings', 'Current', 'Fixed Deposit', or 'Salary'. Provided: " + accountType);
     }
     private double minbalance(String accountType) {
         if ("Current".equalsIgnoreCase(accountType)) {
@@ -50,7 +54,7 @@ public class Account {
         }
         return MIN_SAVINGS;
     }
-    private void validateActive() throws InactiveAccountException {
+    protected void validateActive() throws InactiveAccountException {
         if(!"Active".equalsIgnoreCase(status)){
             throw new InactiveAccountException("Account is inactive. Please reopen the account or contact support.");
         }
@@ -144,7 +148,7 @@ public class Account {
         this.age =age;
     }
 
-    public double getBalance() {
+    protected double getBalance() {
         return balance;
     }
 
