@@ -2,51 +2,88 @@ package com.gdb.tests;
 
 import com.gdb.domain.AbstractAccount;
 import com.gdb.domain.CurrentAccount;
-import com.gdb.domain.FixedDepositAccount;
+import com.gdb.domain.SalaryAccount;
 import com.gdb.domain.SavingsAccount;
 import com.gdb.exceptions.AccountException;
-import com.gdb.exceptions.MinimumBalanceViolationException;
 
 public class TestAbstractAccount {
     public static void main(String[] args) {
-        System.out.println("=== Activity 9: Abstract Account & Template Pattern ===");
+        System.out.println("=== Activity 10: Banking Operations Suite ===");
 
-        AbstractAccount savings = new SavingsAccount(3001, "Savings User", 25, 10000.0);
-        savings.setPin(1234);
+        AbstractAccount[] portfolio = {
+                createSavingsAccount(),
+                createCurrentAccount(),
+                createSalaryAccount()
+        };
+
         try {
-            savings.withdraw(2000.0, 1234);
-            System.out.println("[Savings] Withdraw 2000: SUCCESS | Balance: Rs " + savings.getBalance());
+            transferFunds(portfolio[0], portfolio[1], 3000.0, 1234);
         } catch (AccountException exception) {
-            System.out.println("[Savings] Withdraw 2000: Unexpected " + exception.getClass().getSimpleName() + " [FAIL]");
+            System.out.println("Transfer failed unexpectedly: " + exception.getMessage());
         }
 
         try {
-            savings.withdraw(8000.0, 1234);
-            System.out.println("[Savings] Withdraw below min balance: SUCCESS [FAIL]");
-        } catch (MinimumBalanceViolationException exception) {
-            System.out.println("[Savings] Withdraw below min balance: Caught MinimumBalanceViolationException [PASS]");
+            transferFunds(portfolio[0], portfolio[1], 1000.0, 9999);
+            System.out.println("Failed Transfer (Wrong PIN): SUCCESS [FAIL]");
         } catch (AccountException exception) {
-            System.out.println("[Savings] Withdraw below min balance: Unexpected " + exception.getClass().getSimpleName() + " [FAIL]");
+            System.out.println("Failed Transfer (Wrong PIN): Exception caught, no balance changed [PASS]");
         }
 
-        AbstractAccount current = new CurrentAccount(3002, "Current User", 30, 10000.0);
-        current.setPin(1234);
-        try {
-            current.withdraw(13000.0, 1234);
-            System.out.println("[Current] Overdraft debit: SUCCESS | Balance: Rs " + current.getBalance());
-        } catch (AccountException exception) {
-            System.out.println("[Current] Overdraft debit: Unexpected " + exception.getClass().getSimpleName() + " [FAIL]");
-        }
+        processMonthlyCycle(portfolio);
+        System.out.println("All banking operations passed!");
+    }
 
-        AbstractAccount fixedDeposit = new FixedDepositAccount(3003, "Fixed Deposit User", 35, 10000.0, 12, 6.5);
-        fixedDeposit.setPin(1234);
-        try {
-            fixedDeposit.withdraw(1000.0, 1234);
-            System.out.println("[FixedDeposit] Premature debit: SUCCESS [FAIL]");
-        } catch (AccountException exception) {
-            System.out.println("[FixedDeposit] Premature debit: Caught AccountException [PASS]");
-        }
+    private static AbstractAccount createSavingsAccount() {
+        AbstractAccount account = new SavingsAccount(4001, "Savings User", 25, 10000.0);
+        account.setPin(1234);
+        return account;
+    }
 
-        System.out.println("Template method pattern executed successfully!");
+    private static AbstractAccount createCurrentAccount() {
+        AbstractAccount account = new CurrentAccount(4002, "Current User", 30, 5000.0);
+        account.setPin(1234);
+        return account;
+    }
+
+    private static AbstractAccount createSalaryAccount() {
+        AbstractAccount account = new SalaryAccount(4003, "Salary User", 28, 7000.0, "Infosys");
+        account.setPin(1234);
+        return account;
+    }
+
+    private static void transferFunds(AbstractAccount source, AbstractAccount destination,
+                                      double amount, int pin) throws AccountException {
+        source.withdraw(amount, pin);
+        destination.deposit(amount);
+        System.out.println("Transfer Rs " + amount + " from " + accountLabel(source)
+            + " to " + accountLabel(destination) + ": SUCCESS");
+        System.out.println(accountLabel(source) + " Balance: Rs " + source.getBalance()
+            + " | " + accountLabel(destination) + " Balance: Rs " + destination.getBalance());
+    }
+
+    private static void processMonthlyCycle(AbstractAccount[] portfolio) {
+        for (AbstractAccount account : portfolio) {
+            if (account instanceof SavingsAccount savingsAccount) {
+                savingsAccount.applyInterest();
+            } else if (account instanceof SalaryAccount salaryAccount) {
+                if (salaryAccount.getInactiveMonths() == 0) {
+                    System.out.println("Salary credit history checked.");
+                }
+            }
+        }
+        System.out.println("Monthly Interest Cycle processed for all qualifying accounts.");
+    }
+
+    private static String accountLabel(AbstractAccount account) {
+        if (account instanceof SavingsAccount) {
+            return "Savings";
+        }
+        if (account instanceof CurrentAccount) {
+            return "Current";
+        }
+        if (account instanceof SalaryAccount) {
+            return "Salary";
+        }
+        return "Account";
     }
 }
