@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Test Account",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.TestAccount"
+        },
+        {
+            "type": "java",
+            "name": "Activity 7 Test",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.Activity7Test"
+        },
+        {
+            "type": "java",
+            "name": "Activity 8 Test",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.testactivity8"
+        },
+        {
+            "type": "java",
+            "name": "Test Account Subclasses",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.TestAccountSubclasses"
+        },
+        {
+            "type": "java",
+            "name": "Test Account Exceptions",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.TestAccountExceptions"
+        }
+    ]
+}

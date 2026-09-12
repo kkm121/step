@@ -1,3 +1,7 @@
+package com.gdb.domain;
+
+import com.gdb.exceptions.*;
+
 public class Account {
     //Constants
     private static final int MIN_AGE=18;
@@ -66,7 +70,7 @@ public class Account {
         }
         this.balance+=amount;
     }
-    public void withdraw(double amount, int pin) throws InactiveAccountException,InvalidAmountException, InvalidPinException, MinimumBalanceViolationException, InsufficientBalanceException {
+    public void withdraw(double amount, int pin) throws AccountException {
         validateActive();
         if (this.pin==null) {
             throw new InvalidPinException("PIN not set for this account");
@@ -86,7 +90,7 @@ public class Account {
         this.balance-=amount;
     }
 
-    public void withdraw(double amount) throws InactiveAccountException,InvalidAmountException, InvalidPinException, MinimumBalanceViolationException, InsufficientBalanceException {
+    public void withdraw(double amount) throws AccountException {
         validateActive();
         if (amount<= 0) {
             throw new InvalidAmountException("Withdrawal amount must be positive. Provided: Rs " + amount);
@@ -148,7 +152,7 @@ public class Account {
         this.age =age;
     }
 
-    protected double getBalance() {
+    public double getBalance() {
         return balance;
     }
 

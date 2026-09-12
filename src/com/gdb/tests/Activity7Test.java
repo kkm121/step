@@ -1,3 +1,7 @@
+package com.gdb.tests;
+
+import com.gdb.domain.*;
+
 public class Activity7Test {
     public static void main(String[] args) {
         System.out.println("=== Activity 7: Account Subclasses Test ===");

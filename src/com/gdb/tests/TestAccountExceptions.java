@@ -1,3 +1,7 @@
+package com.gdb.tests;
+
+import com.gdb.domain.Account;
+
 public class TestAccountExceptions {
     private static String pinStatus(Account acc) {
         return acc.getPin() == null ?"No":"Yes";
