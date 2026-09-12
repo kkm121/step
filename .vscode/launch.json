@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestAbstractAccount",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.TestAbstractAccount",
+            "projectName": "step_43387b05"
+        },
+        {
+            "type": "java",
             "name": "Test Account",
             "request": "launch",
             "mainClass": "com.gdb.tests.TestAccount"

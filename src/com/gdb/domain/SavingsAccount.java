@@ -3,7 +3,7 @@ package com.gdb.domain;
 import com.gdb.exceptions.AccountException;
 import com.gdb.exceptions.MinimumBalanceViolationException;
 
-public class SavingsAccount extends Account {
+public class SavingsAccount extends AbstractAccount {
     private double minBalance;
     private double interestRate;
 
@@ -13,19 +13,11 @@ public class SavingsAccount extends Account {
         this.interestRate = 4.0;
     }
     @Override
-    public void withdraw(double amount) throws AccountException {
-        if(super.getBalance() - amount < minBalance){
+    protected void processDebit(double amount) throws AccountException {
+        if (balance - amount < minBalance) {
             throw new MinimumBalanceViolationException("Withdrawal amount must be greater than minimum balance. Provided: Rs " + amount);
         }
-        super.withdraw(amount);
-    }
-
-    @Override
-    public void withdraw(double amount, int pin) throws AccountException {
-        if (super.getBalance() - amount < minBalance) {
-            throw new MinimumBalanceViolationException("Withdrawal amount must be greater than minimum balance. Provided: Rs " + amount);
-        }
-        super.withdraw(amount, pin);
+        balance -= amount;
     }
         
     public void applyInterest() {
