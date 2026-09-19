@@ -1,5 +1,4 @@
 package com.gdb.domain;
-
 import com.gdb.exceptions.AccountException;
 import com.gdb.exceptions.MinimumBalanceViolationException;
 
@@ -17,18 +16,16 @@ public class SavingsAccount extends AbstractAccount {
         if (balance - amount < minBalance) {
             throw new MinimumBalanceViolationException("Withdrawal amount must be greater than minimum balance. Provided: Rs " + amount);
         }
-        balance -= amount;
+        balance-=amount;
     }
         
     public void applyInterest() {
         double interest = getBalance() * (interestRate / 100);
         this.balance+=interest;
     }
-
     public double getMinBalance() {
         return minBalance;
     }
-
     public double getInterestRate() {
         return interestRate;
     }
