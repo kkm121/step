@@ -1,5 +1,8 @@
 package com.gdb.domain;
-import com.gdb.exceptions.*;
+import com.gdb.exceptions.AccountException;
+import com.gdb.exceptions.InactiveAccountException;
+import com.gdb.exceptions.InvalidAmountException;
+import com.gdb.exceptions.InvalidPinException;
 
 public abstract class AbstractAccount {
     protected int accountNumber;
@@ -9,20 +12,20 @@ public abstract class AbstractAccount {
     protected String accountType;
     protected String status;
     protected Integer pin;
-    public AbstractAccount(int accountNumber, String name, int age, double initialBalance, String accountType) {
-        if (age < 18) {
+    public AbstractAccount(int accountNumber,String name,int age,double initialBalance,String accountType) {
+        if (age<18){
             throw new IllegalArgumentException("Customer must be at least 18 years old. Provided: " + age);
         }
-        if (initialBalance < 0) {
+        if(initialBalance<0) {
             throw new IllegalArgumentException("Initial balance cannot be negative");
         }
-        this.accountNumber = accountNumber;
-        this.name = name;
-        this.age = age;
-        this.balance = initialBalance;
-        this.accountType = accountType;
-        this.status = "Active";
-        this.pin = null;
+        this.accountNumber=accountNumber;
+        this.name=name;
+        this.age=age;
+        this.balance=initialBalance;
+        this.accountType=accountType;
+        this.status="Active";
+        this.pin=null;
     }
     public void deposit(double amount) throws InvalidAmountException, InactiveAccountException {
         validateActive();
@@ -31,24 +34,23 @@ public abstract class AbstractAccount {
         }
         this.balance+=amount;
     }
-    protected void validatePin(int pin) throws InvalidPinException{
-        if(this.pin==null || !this.pin.equals(pin)){
+    protected void validatePin(int pin)throws InvalidPinException{
+        if(this.pin==null ||!this.pin.equals(pin)){
             throw new InvalidPinException("Invalid PIN");
         }
     }
-    public void changePin(int oldPin, int newPin) throws InvalidPinException, IllegalArgumentException {
+    public void changePin(int oldPin,int newPin) throws InvalidPinException, IllegalArgumentException {
         validatePin(oldPin);
         if(newPin<1000 || newPin>9999){
             throw new IllegalArgumentException("PIN must contain 4 digits");
         }
         this.pin=newPin;
     }
-
     public void setPin(int pin) throws IllegalArgumentException {
-        if (pin < 1000 || pin > 9999) {
+        if (pin<1000 || pin>9999) {
             throw new IllegalArgumentException("PIN must contain 4 digits");
         }
-        this.pin = pin;
+        this.pin= pin;
     }
     protected void validateActive() throws InactiveAccountException{
         if(!"Active".equalsIgnoreCase(status)){
@@ -56,13 +58,12 @@ public abstract class AbstractAccount {
         }
     }
     public void displayAccountInfo(){
-        System.out.println("Account Number: " + accountNumber);
-        System.out.println("Name: " + name);
-        System.out.println("Balance: Rs " + balance);
-        System.out.println("Type: " + accountType);
-        System.out.println("Status: " + status);
+        System.out.println("Account Number: " +accountNumber);
+        System.out.println("Name: " +name);
+        System.out.println("Balance: Rs " +balance);
+        System.out.println("Type: " +accountType);
+        System.out.println("Status: " +status);
     }
-
     public double getBalance() {
         return balance;
     }

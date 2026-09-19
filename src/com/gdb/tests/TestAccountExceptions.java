@@ -1,5 +1,4 @@
 package com.gdb.tests;
-
 import com.gdb.domain.Account;
 
 public class TestAccountExceptions {

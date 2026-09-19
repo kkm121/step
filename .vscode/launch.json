@@ -6,6 +6,13 @@
             "name": "TestAbstractAccount",
             "request": "launch",
             "mainClass": "com.gdb.tests.TestAbstractAccount",
+            "projectName": "global-digital-bank"
+        },
+        {
+            "type": "java",
+            "name": "TestAbstractAccount",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.TestAbstractAccount",
             "projectName": "step_43387b05"
         },
         {
