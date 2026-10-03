@@ -8,6 +8,10 @@ public class CurrentAccount extends AbstractAccount {
         super(accountNumber,name, age,initialBalance, "CURRENT");
         this.overdraftLimit=25000.0;
     }
+    public CurrentAccount(String accountNumber, String name, int age, double initialBalance,String status, String pin) {
+        super(accountNumber, name, age, initialBalance, "CURRENT", status, pin);
+        this.overdraftLimit = 25000.0;
+    }
     @Override
     protected void processDebit(double amount) throws InsufficientBalanceException {
         if (amount>balance +overdraftLimit) {
