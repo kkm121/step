@@ -3,6 +3,27 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestAccountRulesEngine",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.TestAccountRulesEngine",
+            "projectName": "global-digital-bank"
+        },
+        {
+            "type": "java",
+            "name": "TestInterfaceFactory",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.TestInterfaceFactory",
+            "projectName": "global-digital-bank"
+        },
+        {
+            "type": "java",
+            "name": "TestAbstractAccount",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.TestAbstractAccount",
+            "projectName": "global-digital-bank"
+        },
+        {
+            "type": "java",
             "name": "TestAbstractAccount",
             "request": "launch",
             "mainClass": "com.gdb.tests.TestAbstractAccount",

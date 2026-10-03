@@ -1,4 +1,5 @@
 package com.gdb.domain;
+
 import com.gdb.exceptions.InsufficientBalanceException;
 
 public class CurrentAccount extends AbstractAccount {
@@ -6,6 +7,10 @@ public class CurrentAccount extends AbstractAccount {
     public CurrentAccount(int accountNumber,String name,int age,double initialBalance) {
         super(accountNumber,name, age,initialBalance, "CURRENT");
         this.overdraftLimit=25000.0;
+    }
+    public CurrentAccount(String accountNumber, String name, int age, double initialBalance,String status, String pin) {
+        super(accountNumber, name, age, initialBalance, "CURRENT", status, pin);
+        this.overdraftLimit = 25000.0;
     }
     @Override
     protected void processDebit(double amount) throws InsufficientBalanceException {

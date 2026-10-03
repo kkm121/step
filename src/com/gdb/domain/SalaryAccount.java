@@ -10,6 +10,11 @@ public class SalaryAccount extends AbstractAccount {
         this.employerName = employerName;
         this.inactiveMonths = 0;
     }
+    public SalaryAccount(String accountNumber, String name, int age, double initialBalance,String status, String pin) {
+        super(accountNumber, name, age, initialBalance, "SALARY", status, pin);
+        this.employerName = "Unknown";
+        this.inactiveMonths = 0;
+    }
     @Override
     protected void processDebit(double amount) throws AccountException {
         if (amount>balance) {
