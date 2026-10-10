@@ -20,4 +20,12 @@ public interface IAccount {
     boolean verifyPin(int pin);
     boolean verifyPin(String pin);
     boolean canWithdraw(double amount);
+
+    default int getAccountNumberAsInt() {
+        try {
+            return Integer.parseInt(getAccountNumber().replaceAll("\\D", ""));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
 }

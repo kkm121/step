@@ -12,60 +12,66 @@ import com.gdb.exceptions.AccountException;
 import com.gdb.exceptions.InvalidPinException;
 import com.gdb.logging.FileLogDestination;
 import com.gdb.logging.TransactionLogger;
+import com.gdb.repository.AccountRepository;
+import com.gdb.repository.RepositoryFactory;
+import com.gdb.repository.TransactionRepository;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 public class AccountService {
 
-    private final Map<Integer, IAccount> accounts;
+    private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
     private final TransactionLogger logger;
     private final TransferService transferService;
-    private int nextAccountNumber = 1001;
 
     public AccountService() {
-        this(new TransactionLogger(new FileLogDestination()));
+        this(RepositoryFactory.getAccountRepository(), RepositoryFactory.getTransactionRepository(), new TransactionLogger(new FileLogDestination()), new TransferService());
     }
 
     public AccountService(TransactionLogger logger) {
-        this(logger, new TransferService());
+        this(RepositoryFactory.getAccountRepository(), RepositoryFactory.getTransactionRepository(), logger, new TransferService());
     }
 
     public AccountService(TransactionLogger logger, TransferService transferService) {
-        this.accounts = new LinkedHashMap<>();
+        this(RepositoryFactory.getAccountRepository(), RepositoryFactory.getTransactionRepository(), logger, transferService);
+    }
+
+    public AccountService(AccountRepository accountRepository, TransactionRepository transactionRepository, TransactionLogger logger) {
+        this(accountRepository, transactionRepository, logger, new TransferService());
+    }
+
+    public AccountService(AccountRepository accountRepository, TransactionRepository transactionRepository, TransactionLogger logger, TransferService transferService) {
+        this.accountRepository = accountRepository != null ? accountRepository : RepositoryFactory.getAccountRepository();
+        this.transactionRepository = transactionRepository != null ? transactionRepository : RepositoryFactory.getTransactionRepository();
         this.logger = logger;
-        this.transferService = transferService;
+        this.transferService = transferService != null ? transferService : new TransferService();
     }
 
     public IAccount openAccount(String type, String name, int age, double initialBalance) {
         return openAccount(type, name, age, initialBalance, "1234", 0);
     }
 
+    public IAccount openAccount(String type, String name, int age, double initialBalance, int tenureYears) {
+        return openAccount(type, name, age, initialBalance, "1234", tenureYears);
+    }
+
     public IAccount openAccount(String type, String name, int age, double initialBalance, String pin, int tenure) {
-        int accNo = nextAccountNumber++;
+        int accNo = accountRepository.nextAccountNumber();
         IAccount account = AccountFactory.createAccount(type, String.valueOf(accNo), name, age, initialBalance, "Active", pin, tenure);
         if (account instanceof Account acc) {
             try {
                 acc.setPin(pin);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
-        accounts.put(accNo, account);
+        accountRepository.save(account);
         return account;
     }
 
-    public void closeAccount(int accountNumber, int pin) throws AccountException {
-        IAccount account = getAccount(accountNumber);
-        if (account == null) {
-            throw new AccountException("Account not found: " + accountNumber);
-        }
-        if (!account.verifyPin(pin)) {
-            throw new InvalidPinException("Incorrect PIN");
-        }
-        if (account instanceof Account acc) {
-            acc.closeAccount();
-        }
+    public IAccount getAccount(int accountNumber) {
+        return accountRepository.findById(accountNumber);
     }
 
     public Transaction deposit(int accountNumber, double amount) throws Exception {
@@ -75,7 +81,15 @@ public class AccountService {
         }
         DepositCommand cmd = new DepositCommand((Account) account, amount);
         cmd.execute();
-        logger.log(cmd);
+        if (accountRepository != null) {
+            accountRepository.update(account);
+        }
+        if (transactionRepository != null && cmd.getTransaction() != null) {
+            transactionRepository.save(cmd.getTransaction());
+        }
+        if (logger != null) {
+            logger.log(cmd);
+        }
         return cmd.getTransaction();
     }
 
@@ -86,7 +100,15 @@ public class AccountService {
         }
         WithdrawCommand cmd = new WithdrawCommand((Account) account, amount, pin);
         cmd.execute();
-        logger.log(cmd);
+        if (accountRepository != null) {
+            accountRepository.update(account);
+        }
+        if (transactionRepository != null && cmd.getTransaction() != null) {
+            transactionRepository.save(cmd.getTransaction());
+        }
+        if (logger != null) {
+            logger.log(cmd);
+        }
         return cmd.getTransaction();
     }
 
@@ -101,24 +123,53 @@ public class AccountService {
         }
         TransferCommand cmd = new TransferCommand((Account) from, (Account) to, amount, pin);
         cmd.execute();
-        logger.log(cmd);
+        if (accountRepository != null) {
+            accountRepository.update(from);
+            accountRepository.update(to);
+        }
+        if (transactionRepository != null && cmd.getTransaction() != null) {
+            transactionRepository.save(cmd.getTransaction());
+        }
+        if (logger != null) {
+            logger.log(cmd);
+        }
         return cmd.getTransaction();
     }
 
-    public IAccount getAccount(int accountNumber) {
-        return accounts.get(accountNumber);
+    public void closeAccount(int accountNumber, int pin) throws AccountException {
+        IAccount account = getAccount(accountNumber);
+        if (account == null) {
+            throw new AccountException("Account not found: " + accountNumber);
+        }
+        if (!account.verifyPin(pin)) {
+            throw new InvalidPinException("Incorrect PIN");
+        }
+        if (account instanceof Account acc) {
+            acc.closeAccount();
+        }
+        if (accountRepository != null) {
+            accountRepository.update(account);
+        }
     }
 
-    public Collection<IAccount> getAllAccounts() {
-        return new ArrayList<>(accounts.values());
+    public List<IAccount> getAllAccounts() {
+        return accountRepository != null ? accountRepository.findAll() : Collections.emptyList();
     }
 
     public List<TransactionCommand> getTransactionHistory() {
-        return logger.readAll();
+        return logger != null ? logger.readAll() : new ArrayList<>();
+    }
+
+    public List<Transaction> getTransactionRecords() {
+        return transactionRepository != null ? transactionRepository.findAll() : Collections.emptyList();
+    }
+
+    public List<Transaction> getTransactionRecords(int accountNumber) {
+        return transactionRepository != null ? transactionRepository.findByAccount(accountNumber) : Collections.emptyList();
     }
 
     public int getNextAccountNumber() {
-        return nextAccountNumber;
+        return accountRepository.nextAccountNumber();
     }
 
     public TransactionLogger getLogger() {
@@ -127,5 +178,13 @@ public class AccountService {
 
     public TransferService getTransferService() {
         return transferService;
+    }
+
+    public AccountRepository getAccountRepository() {
+        return accountRepository;
+    }
+
+    public TransactionRepository getTransactionRepository() {
+        return transactionRepository;
     }
 }
