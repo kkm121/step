@@ -1,5 +1,8 @@
 package com.gdb.repository;
 
+import com.gdb.db.ConnectionProvider;
+import com.gdb.db.JdbcConnectionProvider;
+import com.gdb.db.SchemaInitializer;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -9,6 +12,7 @@ public class RepositoryFactory {
 
     private static AccountRepository accountRepositoryInstance;
     private static TransactionRepository transactionRepositoryInstance;
+    private static ConnectionProvider connectionProviderInstance;
 
     public static Properties loadPersistenceProperties() {
         Properties props=new Properties();
@@ -44,13 +48,25 @@ public class RepositoryFactory {
         return loadPersistenceProperties().getProperty("persistence.mode", "memory").trim().toLowerCase();
     }
 
+    public static synchronized ConnectionProvider getConnectionProvider() {
+        if (connectionProviderInstance==null) {
+            Properties props=loadPersistenceProperties();
+            String url=props.getProperty("persistence.db.url", "jdbc:sqlite:gdb.db").trim();
+            String driver=props.getProperty("persistence.db.driver", "org.sqlite.JDBC").trim();
+            connectionProviderInstance=new JdbcConnectionProvider(url,driver);
+            SchemaInitializer.initialize(connectionProviderInstance);
+        }
+        return connectionProviderInstance;
+    }
+
     public static synchronized AccountRepository getAccountRepository() {
         if (accountRepositoryInstance==null) {
             String mode=getPersistenceMode();
             if ("memory".equals(mode)) {
                 accountRepositoryInstance=new InMemoryAccountRepository();
             } else if ("jdbc".equals(mode)) {
-                throw new UnsupportedOperationException("JDBC repository not implemented yet - coming in Activity 22");
+                getConnectionProvider();
+                throw new UnsupportedOperationException("JdbcAccountRepository will be implemented in Activity 23. Use memory mode or TestJdbcConnection for Activity 22.");
             } else if ("file".equals(mode)) {
                 throw new UnsupportedOperationException("File repository not implemented yet");
             } else {
@@ -66,7 +82,8 @@ public class RepositoryFactory {
             if ("memory".equals(mode)) {
                 transactionRepositoryInstance=new InMemoryTransactionRepository();
             } else if ("jdbc".equals(mode)) {
-                throw new UnsupportedOperationException("JDBC repository not implemented yet - coming in Activity 22");
+                getConnectionProvider();
+                throw new UnsupportedOperationException("JdbcTransactionRepository will be implemented in Activity 24. Use memory mode or TestJdbcConnection for Activity 22.");
             } else if ("file".equals(mode)) {
                 throw new UnsupportedOperationException("File repository not implemented yet");
             } else {
@@ -77,6 +94,10 @@ public class RepositoryFactory {
     }
 
     public static synchronized void reset() {
+        if (connectionProviderInstance!=null) {
+            connectionProviderInstance.shutdown();
+            connectionProviderInstance=null;
+        }
         accountRepositoryInstance=null;
         transactionRepositoryInstance=null;
     }

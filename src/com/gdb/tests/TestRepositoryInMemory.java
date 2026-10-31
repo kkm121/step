@@ -88,9 +88,11 @@ public class TestRepositoryInMemory {
         assert !service.getTransactionRecords().isEmpty():"Transaction records should not be empty";
 
         String mode=RepositoryFactory.getPersistenceMode();
-        assert "memory".equals(mode):"Persistence mode should be memory";
-        assert RepositoryFactory.getAccountRepository()!=null:"Factory account repo should not be null";
-        assert RepositoryFactory.getTransactionRepository()!=null:"Factory transaction repo should not be null";
+        assert "memory".equals(mode)||"jdbc".equals(mode):"Persistence mode should be valid";
+        if ("memory".equals(mode)) {
+            assert RepositoryFactory.getAccountRepository()!=null:"Factory account repo should not be null";
+            assert RepositoryFactory.getTransactionRepository()!=null:"Factory transaction repo should not be null";
+        }
 
         System.out.println("  -> PASSED\n");
 

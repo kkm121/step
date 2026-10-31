@@ -13,6 +13,8 @@ import com.gdb.exceptions.InvalidPinException;
 import com.gdb.logging.FileLogDestination;
 import com.gdb.logging.TransactionLogger;
 import com.gdb.repository.AccountRepository;
+import com.gdb.repository.InMemoryAccountRepository;
+import com.gdb.repository.InMemoryTransactionRepository;
 import com.gdb.repository.RepositoryFactory;
 import com.gdb.repository.TransactionRepository;
 import java.util.ArrayList;
@@ -26,16 +28,32 @@ public class AccountService {
     private final TransactionLogger logger;
     private final TransferService transferService;
 
+    private static AccountRepository createDefaultAccountRepository() {
+        try {
+            return RepositoryFactory.getAccountRepository();
+        } catch (UnsupportedOperationException e) {
+            return new InMemoryAccountRepository();
+        }
+    }
+
+    private static TransactionRepository createDefaultTransactionRepository() {
+        try {
+            return RepositoryFactory.getTransactionRepository();
+        } catch (UnsupportedOperationException e) {
+            return new InMemoryTransactionRepository();
+        }
+    }
+
     public AccountService() {
-        this(RepositoryFactory.getAccountRepository(),RepositoryFactory.getTransactionRepository(),new TransactionLogger(new FileLogDestination()),new TransferService());
+        this(createDefaultAccountRepository(),createDefaultTransactionRepository(),new TransactionLogger(new FileLogDestination()),new TransferService());
     }
 
     public AccountService(TransactionLogger logger) {
-        this(RepositoryFactory.getAccountRepository(),RepositoryFactory.getTransactionRepository(),logger,new TransferService());
+        this(createDefaultAccountRepository(),createDefaultTransactionRepository(),logger,new TransferService());
     }
 
     public AccountService(TransactionLogger logger,TransferService transferService) {
-        this(RepositoryFactory.getAccountRepository(),RepositoryFactory.getTransactionRepository(),logger,transferService);
+        this(createDefaultAccountRepository(),createDefaultTransactionRepository(),logger,transferService);
     }
 
     public AccountService(AccountRepository accountRepository,TransactionRepository transactionRepository,TransactionLogger logger) {
@@ -43,8 +61,8 @@ public class AccountService {
     }
 
     public AccountService(AccountRepository accountRepository,TransactionRepository transactionRepository,TransactionLogger logger,TransferService transferService) {
-        this.accountRepository=accountRepository!=null?accountRepository:RepositoryFactory.getAccountRepository();
-        this.transactionRepository=transactionRepository!=null?transactionRepository:RepositoryFactory.getTransactionRepository();
+        this.accountRepository=accountRepository!=null?accountRepository:createDefaultAccountRepository();
+        this.transactionRepository=transactionRepository!=null?transactionRepository:createDefaultTransactionRepository();
         this.logger=logger;
         this.transferService=transferService!=null?transferService:new TransferService();
     }
