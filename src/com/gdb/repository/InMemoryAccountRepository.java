@@ -8,11 +8,11 @@ import java.util.Map;
 
 public class InMemoryAccountRepository implements AccountRepository {
 
-    private final Map<Integer, IAccount> accounts = new HashMap<>();
-    private int nextAccountNumber = 1001;
+    private final Map<Integer, IAccount> accounts=new HashMap<>();
+    private int nextAccountNumber=1001;
 
     private int extractId(IAccount account) {
-        if (account == null) {
+        if (account==null) {
             return 0;
         }
         try {
@@ -24,7 +24,7 @@ public class InMemoryAccountRepository implements AccountRepository {
 
     @Override
     public void save(IAccount account) {
-        if (account != null) {
+        if (account!=null) {
             accounts.put(extractId(account), account);
         }
     }
@@ -41,8 +41,8 @@ public class InMemoryAccountRepository implements AccountRepository {
 
     @Override
     public void update(IAccount account) {
-        if (account != null) {
-            int id = extractId(account);
+        if (account!=null) {
+            int id=extractId(account);
             if (accounts.containsKey(id)) {
                 accounts.put(id, account);
             }

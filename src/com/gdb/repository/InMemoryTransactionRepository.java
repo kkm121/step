@@ -1,5 +1,4 @@
 package com.gdb.repository;
-
 import com.gdb.domain.Transaction;
 import java.util.ArrayList;
 import java.util.List;
@@ -7,22 +6,18 @@ import java.util.stream.Collectors;
 
 public class InMemoryTransactionRepository implements TransactionRepository {
 
-    private final List<Transaction> transactions = new ArrayList<>();
+    private final List<Transaction> transactions=new ArrayList<>();
 
     @Override
     public void save(Transaction transaction) {
-        if (transaction != null) {
+        if (transaction!=null) {
             transactions.add(transaction);
         }
     }
 
     @Override
     public List<Transaction> findByAccount(int accountNumber) {
-        return transactions.stream()
-                .filter(t -> t.getAccountNumber() == accountNumber ||
-                             t.getFromAccount() == accountNumber ||
-                             t.getToAccount() == accountNumber)
-                .collect(Collectors.toList());
+        return transactions.stream().filter(t->t.getAccountNumber()==accountNumber||t.getFromAccount()==accountNumber||t.getToAccount()==accountNumber).collect(Collectors.toList());
     }
 
     @Override

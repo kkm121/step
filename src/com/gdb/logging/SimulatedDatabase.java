@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class SimulatedDatabase {
-
     private final Map<String, List<Object>> tables = new HashMap<>();
-
     public synchronized void insert(String table, Object record) {
         tables.computeIfAbsent(table, k -> new ArrayList<>()).add(record);
     }
