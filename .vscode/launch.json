@@ -7,7 +7,7 @@
             "request": "launch",
             "mainClass": "com.gdb.tests.TestJdbcAccountRepository",
             "projectName": "global-digital-bank",
-            "vmArgs": "-ea"
+            "vmArgs": "-ea --enable-native-access=ALL-UNNAMED"
         },
         {
             "type": "java",

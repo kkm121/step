@@ -12,7 +12,7 @@ public class TestJdbcConnection {
 
     public static void main(String[] args) throws Exception {
         System.out.println("=".repeat(60));
-        System.out.println("  ACTIVITY 22 — JDBC CONNECTION & SCHEMA INITIALIZATION");
+        System.out.println("  ACTIVITY 22 - JDBC CONNECTION & SCHEMA INITIALIZATION");
         System.out.println("=".repeat(60));
 
         File testDb=new File("test_gdb.db");
