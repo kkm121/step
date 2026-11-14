@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 public class InMemoryTransactionRepository implements TransactionRepository {
 
     private final List<Transaction> transactions=new ArrayList<>();
-
     @Override
     public void save(Transaction transaction) {
         if (transaction!=null) {

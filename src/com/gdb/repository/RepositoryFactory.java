@@ -65,8 +65,7 @@ public class RepositoryFactory {
             if ("memory".equals(mode)) {
                 accountRepositoryInstance=new InMemoryAccountRepository();
             } else if ("jdbc".equals(mode)) {
-                getConnectionProvider();
-                throw new UnsupportedOperationException("JdbcAccountRepository will be implemented in Activity 23. Use memory mode or TestJdbcConnection for Activity 22.");
+                accountRepositoryInstance=new JdbcAccountRepository(getConnectionProvider());
             } else if ("file".equals(mode)) {
                 throw new UnsupportedOperationException("File repository not implemented yet");
             } else {
