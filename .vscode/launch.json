@@ -3,6 +3,14 @@
     "configurations": [
         {
             "type": "java",
+            "name": "TestJdbcAccountRepository",
+            "request": "launch",
+            "mainClass": "com.gdb.tests.TestJdbcAccountRepository",
+            "projectName": "global-digital-bank",
+            "vmArgs": "-ea"
+        },
+        {
+            "type": "java",
             "name": "TestAccountRulesEngine",
             "request": "launch",
             "mainClass": "com.gdb.tests.TestAccountRulesEngine",
